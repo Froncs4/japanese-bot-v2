@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  bot:
+    build: .
+    container_name: japanese_bot
+    command: python bot.py --mode bot
+    env_file: .env
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    networks:
+      - app_network
+
+  api:
+    build: .
+    container_name: japanese_api
+    command: python bot.py --mode api
+    env_file: .env
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
+
+# === ПЛАН НА БУДУЩЕЕ (POSTGRES + REDIS) ===
+#   redis:
+#     image: redis:7-alpine
+#     restart: always
+#     networks:
+#       - app_network
+#
+#   postgres:
+#     image: postgres:16-alpine
+#     environment:
+#       POSTGRES_USER: user
+#       POSTGRES_PASSWORD: password
+#       POSTGRES_DB: japanese_db
+#     volumes:
+#       - pg_data:/var/lib/postgresql/data
+#     networks:
+#       - app_network
+#
+# volumes:
+#   pg_data:
